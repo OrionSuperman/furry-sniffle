@@ -5,6 +5,7 @@
 """
 from system.core.router import routes
 
+
 """
     This is where you define routes
     
@@ -16,7 +17,14 @@ from system.core.router import routes
     named id the automatically generated url would be '/products/add/<id>'
     The automatically generated routes respond to all of the http verbs (GET, POST, PUT, PATCH, DELETE)
 """
-routes['default_controller'] = 'Welcome'
+routes['default_controller'] = 'Users'
+routes['/users/register'] = 'Users#register'
+routes['POST']['/users/create'] = 'Users#create'
+routes['/users/login'] = 'Users#login'
+routes['POST']['/users/submitlogin'] = 'Users#submitlogin'
+routes['/users/edit'] = 'Users#edituser'
+routes['POST']['/users/update'] = 'Users#update'
+routes['/users/show/<id>'] = 'Users#show'
 """
     You can add routes and specify their handlers as follows:
 

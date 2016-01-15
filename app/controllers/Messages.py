@@ -8,9 +8,10 @@
 """
 from system.core.controller import *
 
-class Welcome(Controller):
+class Messages(Controller):
     def __init__(self, action):
-        super(Welcome, self).__init__(action)
+        super(Messages, self).__init__(action)
+        self.load_module('Message')
         """
             This is an example of loading a model.
             Every controller has access to the load_model method.
@@ -25,3 +26,13 @@ class Welcome(Controller):
         self.models['WelcomeModel'].get_all_users()
         """
         return self.load_view('index.html')
+
+    def test(self):
+        print "hello this is a test"
+        return self.load_view('users/new.html')
+
+    def show(self):
+        return "this is the users show method"
+
+    def show(self, id):
+        return "Showing user #" + id

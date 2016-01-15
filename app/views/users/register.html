@@ -60,7 +60,7 @@
         <li><a href="#">Profile</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="/users/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
       </ul>
     </div>
   </div>
@@ -72,9 +72,22 @@
       
     </div>
     <div class="col-sm-8 text-left"> 
-      <h1>Welcome</h1>
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+      <h1>Register</h1>
+      <form action='/users/create' method='POST'>
+        <p>Email Address:</p>
+        <input type='text' name='email'>
+        <p>First Name:</p>
+        <input type='text' name='first_name'>
+        <p>Last Name:</p>
+        <input type='text' name='last_name'>
+        <p>Password</p>
+        <input type='password' name='password'>
+        <p>Retype Password</p>
+        <input type='password' name='pw_check'>
+        <input type='submit' value='Register'>
+      </form>
       <hr>
+      <a href='/users/login'>Already have an account? Login</a>
     </div>
     <div class="col-sm-2 sidenav">
       
