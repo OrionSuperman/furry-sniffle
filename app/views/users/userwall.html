@@ -55,8 +55,8 @@
     </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
-        <li class="active"><a href="#">Home</a></li>
-        <li><a href="#">Dashboard</a></li>
+        <li class="active"><a href="/">Home</a></li>
+        <li><a href="/users/dashboard">Dashboard</a></li>
         <li><a href="#">Profile</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -85,23 +85,24 @@
       <form action='/message/post' method='POST'>
         <textarea name='message'></textarea>
         <input type='hidden' name='wall_id' value='{{user_info['id']}}'>
-        <input type='submit' value='post'>
+        <input type='submit' value='Post Message'>
       </form>
       {% for message in messages %}
         <p>{{message['first_name']}} {{message['last_name']}} wrote {{message['created_at']}}</p>
         <p class='message'>{{message['message']}}</p>
         {% for comment in comments %}
           {% if comment['message_id'] == message['id'] %}
-            <p>{{comment['first_name']}} {{comment['last_name']}} wrote {{comment['created_at']}}</p>
+            <p>{{comment['first_name']}} {{comment['last_name']}} commented {{comment['created_at']}}</p>
             <p class='comment'>{{comment['comment']}}</p>
           {% endif %}
+        {% endfor %}
           <form action='/comment/post' method='POST'>
             <textarea name='comment'></textarea>
             <input type='hidden' name='message_id' value='{{message['id']}}'>
-            <input type='submit' value='post'>
-        {% endfor %}
-      {% endfor %}
+            <input type='hidden' name='wall_id' value='{{user_info['id']}}'>
+            <input type='submit' value='Post Comment'>
           </form>
+        {% endfor %}
     </div>
     <div class="col-sm-2 sidenav">
       

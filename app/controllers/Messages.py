@@ -7,7 +7,7 @@
     Create a controller using this template
 """
 from system.core.controller import *
-
+from flask import session
 class Messages(Controller):
     def __init__(self, action):
         super(Messages, self).__init__(action)
@@ -43,4 +43,15 @@ class Messages(Controller):
         'wall_id': request.form['wall_id']
         }
         self.models['Message'].post_message(message_info)
+        return redirect('/users/show/'+str(request.form['wall_id']))
+
+    def create_comment(self):
+        print request.form
+        comment_info = {
+        'comment': request.form['comment'],
+        'message_id': request.form['message_id'],
+        'user_id': session['user_id'],
+        'wall_id': request.form['wall_id']
+        }
+        self.models['Message'].post_comment(comment_info)
         return redirect('/users/show/'+str(request.form['wall_id']))

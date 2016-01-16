@@ -60,9 +60,9 @@
         <li><a href="#">Profile</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        {% if session['id'] %}
-        <li><span class="glyphicon glyphicon-log-in">Welcome {{session['first_name']}}</span><li>
-      {% else %}
+    	{% if session['id'] %}
+    		<li><span class="glyphicon glyphicon-log-in">Welcome {{session['first_name']}}</span><li>
+    	{% else %}
         <li><a href="/users/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
         {% endif %}
       </ul>
@@ -76,7 +76,8 @@
       
     </div>
     <div class="col-sm-8 text-left"> 
-      <h1>Register</h1>
+      <h1>Welcome</h1>
+      <h1>Add a new user</h1>
       <form action='/users/create' method='POST'>
         <p>Email Address:</p>
         <input type='text' name='email'>
@@ -88,10 +89,9 @@
         <input type='password' name='password'>
         <p>Retype Password</p>
         <input type='password' name='pw_check'>
-        <input type='submit' value='Register'>
+        <input type='submit' value='Create'>
       </form>
       <hr>
-      <a href='/users/login'>Already have an account? Login</a>
     </div>
     <div class="col-sm-2 sidenav">
       

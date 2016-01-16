@@ -8,7 +8,7 @@
     Create a model using this template.
 """
 from system.core.model import Model
-
+from flask import session
 class Message(Model):
     def __init__(self):
         super(Message, self).__init__()
@@ -28,8 +28,8 @@ class Message(Model):
         query = "INSERT INTO messages (message, user_id, wall_id, created_at, updated_at) VALUES ('{}', {}, {}, NOW(), NOW())".format(message_info['message'], message_info['wall_id'], message_info['user_id'])
         self.db.query_db(query)
 
-    def post_comment(self):
-        query = "INSERT INTO comments (comment, user_id, message_id, created_at, updated_at) VALUES ('{}', {}, {}, NOW(), NOW())".format(request.form['comment'], session['user_id'], request.form['message_id'])
+    def post_comment(self, comment_info):
+        query = "INSERT INTO comments (comment, user_id, message_id, wall_id, created_at, updated_at) VALUES ('{}', {}, {}, {}, NOW(), NOW())".format(comment_info['comment'], session['user_id'], comment_info['message_id'], comment_info['wall_id'])
         self.db.query_db(query)
 
     """

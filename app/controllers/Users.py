@@ -92,3 +92,14 @@ class Users(Controller):
         comments = self.models['Message'].get_userpage_comments(id)
         print session
         return self.load_view('/users/userwall.html', user_info=user_info, messages=messages, comments=comments)
+
+    def dashboard(self):
+        users = self.models['User'].get_all_users()
+
+        return self.load_view('/users/dashboard.html', users=users)
+
+    def admin_add_user(self):
+        if session['user_level'] > 5:
+            return self.load_view('/users/adduser.html')
+        else:
+            return redirect('/')
