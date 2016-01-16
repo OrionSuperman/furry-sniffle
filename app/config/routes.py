@@ -25,6 +25,7 @@ routes['POST']['/users/submitlogin'] = 'Users#submitlogin'
 routes['/users/edit'] = 'Users#edituser'
 routes['POST']['/users/update'] = 'Users#update'
 routes['/users/show/<id>'] = 'Users#show'
+routes['POST']['/message/post'] = 'Messages#create_msg'
 """
     You can add routes and specify their handlers as follows:
 

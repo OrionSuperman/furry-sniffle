@@ -20,7 +20,9 @@ class User(Model):
 
     # Function to select a single user and return all information stored in the database about them
     def get_user_info(self, id):
-        return self.db.query_db("SELECT * FROM users WHERE id={}".format(id))
+
+        user = self.db.query_db("SELECT * FROM users WHERE id={}".format(id))
+        return user[0]
 
     # Function to check a new user's submitted information and if it passes checks, upload to the server.
     def set_new_user(self, user_info):
@@ -41,8 +43,7 @@ class User(Model):
             errors.append('Email cannot be blank')
         elif not EMAIL_REGEX.match(user_info['email']):
             errors.append('Email format must be valid!')
-        elif not self.db.query_db("SELECT * FROM users WHERE email='{}'".format(user_info['email'])):
-            errors.append('Email address is already in use.')
+        
 
         if not user_info['password']:
             errors.append('Password must not be blank')
@@ -101,11 +102,14 @@ class User(Model):
     def get_login_check(self, info):
         query = "SELECT * FROM users WHERE email='{}'".format(info['email'])
         user = self.db.query_db(query)
+        print '*' * 50
+        print user
         pass_hash = user[0]['pass_hash']
         password = info['password']
+
         if self.bcrypt.check_password_hash(pass_hash, password):
             status = True
-            session['id'] = user[0]['id']
+            session['user_id'] = user[0]['id']
             session['first_name'] = user[0]['first_name']
 
             return {'status':True}

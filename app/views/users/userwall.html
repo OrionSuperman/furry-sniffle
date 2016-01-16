@@ -55,13 +55,14 @@
     </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
-        <li class="active"><a href="/">Home</a></li>
-        
+        <li class="active"><a href="#">Home</a></li>
+        <li><a href="#">Dashboard</a></li>
+        <li><a href="#">Profile</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        {% if session['id'] %}
-        <li><span class="glyphicon glyphicon-log-in">Welcome {{session['first_name']}}</span><li>
-      {% else %}
+    	{% if session['id'] %}
+    		<li><a href='/users/show/{{session['id']}}'>Welcome {{session['first_name']}}</a><li>
+    	{% else %}
         <li><a href="/users/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
         {% endif %}
       </ul>
@@ -75,17 +76,32 @@
       
     </div>
     <div class="col-sm-8 text-left"> 
-      <h1>Sign-in</h1>
-      
-      <form action='/users/submitlogin' method='POST'>
-        <p>Email Address: </p>
-        <input type='text' name='email'>
-        <p>Password: </p>
-        <input type='password' name='password'>
-        <input type='submit' value='Sign In'>
+      <h1>{{user_info['first_name']}} {{user_info['last_name']}}</h1>
+      <p>Registered at: {{user_info['created_at']}}</p>
+      <p>User ID: {{user_info['id']}}</p>
+      <p>Email addresss: {{user_info['email']}} </p>
+
+      <h3>Leave a message for {{user_info['first_name']}}<h3>
+      <form action='/message/post' method='POST'>
+        <textarea name='message'></textarea>
+        <input type='hidden' name='wall_id' value='{{user_info['id']}}'>
+        <input type='submit' value='post'>
       </form>
-      <hr>
-      <a href='/users/register'>Don't have an account? Register.</a>
+      {% for message in messages %}
+        <p>{{message['first_name']}} {{message['last_name']}} wrote {{message['created_at']}}</p>
+        <p class='message'>{{message['message']}}</p>
+        {% for comment in comments %}
+          {% if comment['message_id'] == message['id'] %}
+            <p>{{comment['first_name']}} {{comment['last_name']}} wrote {{comment['created_at']}}</p>
+            <p class='comment'>{{comment['comment']}}</p>
+          {% endif %}
+          <form action='/comment/post' method='POST'>
+            <textarea name='comment'></textarea>
+            <input type='hidden' name='message_id' value='{{message['id']}}'>
+            <input type='submit' value='post'>
+        {% endfor %}
+      {% endfor %}
+          </form>
     </div>
     <div class="col-sm-2 sidenav">
       

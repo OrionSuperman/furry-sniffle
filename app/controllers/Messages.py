@@ -11,7 +11,7 @@ from system.core.controller import *
 class Messages(Controller):
     def __init__(self, action):
         super(Messages, self).__init__(action)
-        self.load_module('Message')
+        self.load_model('Message')
         """
             This is an example of loading a model.
             Every controller has access to the load_model method.
@@ -34,5 +34,13 @@ class Messages(Controller):
     def show(self):
         return "this is the users show method"
 
-    def show(self, id):
-        return "Showing user #" + id
+    def create_msg(self):
+        print '*' * 50
+        print session['user_id']
+        message_info = {
+        'message': request.form['message'],
+        'user_id': session['user_id'],
+        'wall_id': request.form['wall_id']
+        }
+        self.models['Message'].post_message(message_info)
+        return redirect('/users/show/'+str(request.form['wall_id']))

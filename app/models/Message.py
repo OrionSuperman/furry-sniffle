@@ -13,14 +13,19 @@ class Message(Model):
     def __init__(self):
         super(Message, self).__init__()
 
-    def get_user_messages_comments(self, user_id):
+    def get_userpage_messages(self, wall_id):
 
-        query="SELECT messages.message, messages.id, messages.created_at, messages.user_id, messages.wall_id comments.comment, comments.created_at, comments.user_id as com_user_id, users.first_name, com_users.first_name as com_first_name FROM users LEFT JOIN messages ON user.id=messages.wall_id LEFT JOIN comments ON messages.id=comments.message_id LEFT JOIN users as com_users  ON comments.user_id=com_users.id WHERE messages.user_id = {}".format(user_id)
+        query="SELECT messages.message, messages.id, messages.created_at, messages.user_id, messages.wall_id, users.first_name, users.last_name FROM users LEFT JOIN messages ON users.id=messages.wall_id WHERE messages.user_id = {}".format(wall_id)
 
         return self.db.query_db(query)
 
-    def post_message(self):
-        query = "INSERT INTO messages (message, user_id, wall_id, created_at, updated_at) VALUES ('{}', {}, {})".format(request.form['message'], request.form['wall_id'], session['user_id'])
+    def get_userpage_comments(self, wall_id):
+        query = "SELECT comments.comment, comments.created_at, comments.message_id, users.first_name, users.last_name FROM comments LEFT JOIN users ON comments.user_id = users.id WHERE comments.wall_id = {}".format(wall_id)
+
+        return self.db.query_db(query)
+
+    def post_message(self, message_info):
+        query = "INSERT INTO messages (message, user_id, wall_id, created_at, updated_at) VALUES ('{}', {}, {}, NOW(), NOW())".format(message_info['message'], message_info['wall_id'], message_info['user_id'])
         self.db.query_db(query)
 
     def post_comment(self):

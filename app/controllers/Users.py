@@ -27,8 +27,12 @@ class Users(Controller):
         self.models['WelcomeModel'].get_all_users()
         """
         return self.load_view('index.html')
+
+
     def register(self):
         return self.load_view('/users/register.html')
+
+
     def create(self):
         format_user = {
         "first_name" : request.form['first_name'], 
@@ -38,28 +42,33 @@ class Users(Controller):
         "pw_check" : request.form['pw_check']
         }
         user_info = self.models['User'].set_new_user(format_user)
+        print user_info
         if user_info['status'] == True:
-            return redirect('/users/success')
+            return redirect('/users/show/'+str(session['user_id']))
         else:
             for message in user_info['errors']:
                 flash(message, 'regis_errors')
             return redirect('/')
 
+
     def login(self):
         return self.load_view('/users/signin.html')
+
     def submitlogin(self):
 
         user_info = {
         'email': request.form['email'],
         'password' : request.form['password']
         }
-        user = self.models['User'].validate_user(user_info)
-        print user['status']
+        user = self.models['User'].get_login_check(user_info)
+        
         if user['status'] == True:
-            return redirect('/users/success')
+            id = session['user_id']
+            return redirect('/users/show/'+str(id))
         else:
             flash('Email or password incorrect.')
             return redirect('/')
+
     def edituser(self):
         self.load_view('/user/edituser.html')
     def update(self, id): # Make sure to pass the ID from the URL
@@ -77,6 +86,9 @@ class Users(Controller):
                 flash(message, 'regis_errors')
             return redirect('/')
 
-    def show(self, id): # Padd ID from URL
-        user_info = self.load_model('User').get_user_info(id)
-        return self.load_view('/users/userwall.html', user_info=user_info)
+    def show(self, id):
+        user_info = self.models['User'].get_user_info(id)
+        messages = self.models['Message'].get_userpage_messages(id)
+        comments = self.models['Message'].get_userpage_comments(id)
+        print session
+        return self.load_view('/users/userwall.html', user_info=user_info, messages=messages, comments=comments)
