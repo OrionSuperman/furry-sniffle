@@ -56,12 +56,15 @@
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
         <li class="active"><a href="/">Home</a></li>
+        {% if session['user_id'] %}
         <li><a href="/users/dashboard">Dashboard</a></li>
         <li><a href="#">Profile</a></li>
+        {% endif %}
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        {% if session['id'] %}
-        <li><span class="glyphicon glyphicon-log-in">Welcome {{session['first_name']}}</span><li>
+        {% if session['user_id'] %}
+        <li><a href="/users/show/{{session['user_id']}}">Welcome {{session['first_name']}}<a><li>
+          <li><a href="/logout">Logout<a><li>
       {% else %}
         <li><a href="/users/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
         {% endif %}

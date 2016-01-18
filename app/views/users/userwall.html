@@ -5,6 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
   <style>
@@ -39,6 +40,14 @@
       }
       .row.content {height:auto;} 
     }
+
+    .message-title, .comment-title{
+      font-weight: bold;
+    }
+
+    .comment-title, .comment {
+      padding-left: 50px;
+    }
   </style>
 </head>
 <body>
@@ -56,12 +65,15 @@
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
         <li class="active"><a href="/">Home</a></li>
+        {% if session['user_id'] %}
         <li><a href="/users/dashboard">Dashboard</a></li>
         <li><a href="#">Profile</a></li>
+        {% endif %}
       </ul>
       <ul class="nav navbar-nav navbar-right">
-    	{% if session['id'] %}
-    		<li><a href='/users/show/{{session['id']}}'>Welcome {{session['first_name']}}</a><li>
+    	{% if session['user_id'] %}
+    		<li><a href='/users/show/{{session['user_id']}}'>Welcome {{session['first_name']}}</a><li>
+          <li><a href="/logout">Logout<a><li>
     	{% else %}
         <li><a href="/users/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
         {% endif %}
@@ -80,22 +92,32 @@
       <p>Registered at: {{user_info['created_at']}}</p>
       <p>User ID: {{user_info['id']}}</p>
       <p>Email addresss: {{user_info['email']}} </p>
-
-      <h3>Leave a message for {{user_info['first_name']}}<h3>
+      {% if session['user_id'] == user_info['id'] %}
+        <p><a href='/users/edit'>Edit your user profile</a></p>
+      {% endif %}
+      <h3>Leave a message for {{user_info['first_name']}}</h3>
       <form action='/message/post' method='POST'>
         <textarea name='message'></textarea>
         <input type='hidden' name='wall_id' value='{{user_info['id']}}'>
         <input type='submit' value='Post Message'>
       </form>
+      <ul class='list-group'>
       {% for message in messages %}
-        <p>{{message['first_name']}} {{message['last_name']}} wrote {{message['created_at']}}</p>
-        <p class='message'>{{message['message']}}</p>
+        <li class='list-group-item active message-title'>{{message['first_name']}} {{message['last_name']}} wrote {{message['created_at']}}</li>
+        <li class='list-group-item message'>{{message['message']}}</li>
+        <ul class='list-group'>
         {% for comment in comments %}
+        
           {% if comment['message_id'] == message['id'] %}
-            <p>{{comment['first_name']}} {{comment['last_name']}} commented {{comment['created_at']}}</p>
-            <p class='comment'>{{comment['comment']}}</p>
+            
+              <li class='list-group-item active comment-title'>{{comment['first_name']}} {{comment['last_name']}} commented {{comment['created_at']}}</li>
+              <li class='list-group-item comment'>{{comment['comment']}}</li>
+            
           {% endif %}
+          
         {% endfor %}
+        </ul>
+       
           <form action='/comment/post' method='POST'>
             <textarea name='comment'></textarea>
             <input type='hidden' name='message_id' value='{{message['id']}}'>
@@ -103,6 +125,7 @@
             <input type='submit' value='Post Comment'>
           </form>
         {% endfor %}
+      </ul>
     </div>
     <div class="col-sm-2 sidenav">
       

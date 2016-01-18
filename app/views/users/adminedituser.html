@@ -62,10 +62,10 @@
         {% endif %}
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        {% if session['id'] %}
-        <li><a href="/users/show/{{session['user_id']}}">Welcome {{session['first_name']}}<a><li>
+    	{% if session['user_id'] %}
+    		<li><a href="/users/show/{{session['user_id']}}">Welcome {{session['first_name']}}<a><li>
           <li><a href="/logout">Logout<a><li>
-      {% else %}
+    	{% else %}
         <li><a href="/users/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
         {% endif %}
       </ul>
@@ -79,17 +79,41 @@
       
     </div>
     <div class="col-sm-8 text-left"> 
-      <h1>Sign-in</h1>
-      
-      <form action='/users/submitlogin' method='POST'>
-        <p>Email Address: </p>
-        <input type='text' name='email'>
-        <p>Password: </p>
+      <h1>Welcome {{session['first_name']}}: User level {{session['user_level']}}</h1>
+      <h1>Edit user #{{user.id}}'s information</h1>
+      <form action='/users/adminupdate' method='POST'>
+        <p>Email Address:</p>
+        <input type='text' name='email' value='{{user.email}}'>
+        <p>First Name:</p>
+        <input type='text' name='first_name' value='{{user.first_name}}'>
+        <p>Last Name:</p>
+        <input type='text' name='last_name' value='{{user.last_name}}'>
+        <p>User Level</p>
+        <select name='user_level'>
+          <option value=1>User</option>
+          <option value=9>Admin</option>
+        </select>
+        <input type='hidden' name='id' value='{{user.id}}'>
+        <input type='submit' value='Update User'>
+      </form>
+
+      <h1>Change your password</h1>
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          {% for message in messages %}
+            <p>{{message}}</p>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <form action='/users/change_password' method='POST'>
+        <p>Password</p>
         <input type='password' name='password'>
-        <input type='submit' value='Sign In'>
+        <p>Retype Password</p>
+        <input type='password' name='pw_check'>
+        <input type='submit' value='Change Password'>
       </form>
       <hr>
-      <a href='/users/register'>Don't have an account? Register.</a>
     </div>
     <div class="col-sm-2 sidenav">
       

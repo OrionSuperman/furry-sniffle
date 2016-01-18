@@ -62,10 +62,10 @@
         {% endif %}
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        {% if session['id'] %}
-        <li><a href="/users/show/{{session['user_id']}}">Welcome {{session['first_name']}}<a><li>
+    	{% if session['user_id'] %}
+    		<li><a href='/users/show/{{session['user_id']}}'>Welcome {{session['first_name']}}</a><li>
           <li><a href="/logout">Logout<a><li>
-      {% else %}
+    	{% else %}
         <li><a href="/users/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
         {% endif %}
       </ul>
@@ -79,17 +79,16 @@
       
     </div>
     <div class="col-sm-8 text-left"> 
-      <h1>Sign-in</h1>
-      
-      <form action='/users/submitlogin' method='POST'>
-        <p>Email Address: </p>
-        <input type='text' name='email'>
-        <p>Password: </p>
-        <input type='password' name='password'>
-        <input type='submit' value='Sign In'>
+      <h1>CONFIRM DELETION OF:</h1>
+      <h3>{{user_info['first_name']}} {{user_info['last_name']}}</h3>
+      <p>Registered at: {{user_info['created_at']}}</p>
+      <p>User ID: {{user_info['id']}}</p>
+      <p>Email addresss: {{user_info['email']}} </p>
+      <a href='/users/dashboard'>Go back to admin dashboard</a>
+      <form action='/users/delete' method='POST'>
+        <input type='hidden' name='id' value='{{user_info.id}}'>
+        <input type='submit' value='DELETE USER'>
       </form>
-      <hr>
-      <a href='/users/register'>Don't have an account? Register.</a>
     </div>
     <div class="col-sm-2 sidenav">
       

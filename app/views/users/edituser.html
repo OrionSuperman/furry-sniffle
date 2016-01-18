@@ -56,12 +56,15 @@
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
         <li class="active"><a href="/">Home</a></li>
+        {% if session['user_id'] %}
         <li><a href="/users/dashboard">Dashboard</a></li>
         <li><a href="#">Profile</a></li>
+        {% endif %}
       </ul>
       <ul class="nav navbar-nav navbar-right">
-    	{% if session['id'] %}
-    		<li><span class="glyphicon glyphicon-log-in">Welcome {{session['first_name']}}</span><li>
+    	{% if session['user_id'] %}
+    		<li><a href="/users/show/{{session['user_id']}}">Welcome {{session['first_name']}}<a><li>
+          <li><a href="/logout">Logout<a><li>
     	{% else %}
         <li><a href="/users/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
         {% endif %}
@@ -76,20 +79,29 @@
       
     </div>
     <div class="col-sm-8 text-left"> 
-      <h1>Welcome</h1>
+      <h1>Welcome {{user.first_name}}</h1>
       <h1>Edit your user information</h1>
-      <form action='/users/edit' method='POST'>
+      <form action='/users/update' method='POST'>
         <p>Email Address:</p>
         <input type='text' name='email' value='{{user.email}}'>
         <p>First Name:</p>
         <input type='text' name='first_name' value='{{user.first_name}}'>
         <p>Last Name:</p>
         <input type='text' name='last_name' value='{{user.last_name}}'>
-        <input type='hidden' value='session['user_id']'>
+        <input type='hidden' name='id' value='{{session['user_id']}}'>
         <input type='submit' value='Create'>
       </form>
+
       <h1>Change your password</h1>
-      <form action='/user/change_password' method='POST'>
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          {% for message in messages %}
+            <p>{{message}}</p>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <form action='/users/change_password' method='POST'>
         <p>Password</p>
         <input type='password' name='password'>
         <p>Retype Password</p>

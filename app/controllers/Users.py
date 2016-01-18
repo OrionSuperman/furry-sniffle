@@ -69,22 +69,30 @@ class Users(Controller):
             flash('Email or password incorrect.')
             return redirect('/')
 
-    def edituser(self):
-        self.load_view('/user/edituser.html')
-    def update(self, id): # Make sure to pass the ID from the URL
+
+    def update(self): # Make sure to pass the ID from the URL
         format_user = {
-        "id" : id,
+        "id" : request.form['id'],
         "first_name" : request.form['first_name'], 
         "last_name" : request.form['last_name'], 
         "email" : request.form['email']
         }
         user_info = self.models['User'].update_user(format_user)
         if user_info['status'] == True:
-            return redirect('/users/show/'+id)
+            return redirect('/users/show/'+str(request.form['id']))
         else:
             for message in user_info['errors']:
                 flash(message, 'regis_errors')
             return redirect('/')
+
+    def change_password(self):
+        if request.form['password'] == request.form['pw_check'] and len(request.form['password']) > 7:
+            self.models['User'].update_password(request.form['password'], session['user_id'])
+            flash('Your password was changed successfully!')
+            return redirect('/users/edit')
+        else:
+            flash('Your passwords did not match')
+            return redirect('/users/edit')
 
     def show(self, id):
         user_info = self.models['User'].get_user_info(id)
@@ -103,3 +111,41 @@ class Users(Controller):
             return self.load_view('/users/adduser.html')
         else:
             return redirect('/')
+
+    def edit_user(self):
+        user = self.models['User'].get_user_info(session['user_id'])
+        return self.load_view('/users/edituser.html', user=user)
+
+    def admin_edit_user(self, id):
+        if session['user_level'] > 5:
+            user = self.models['User'].get_user_info(id)
+
+            return self.load_view('/users/adminedituser.html', user=user)
+
+    def admin_update_user(self):
+        format_user = {
+        "id" : request.form['id'],
+        "first_name" : request.form['first_name'], 
+        "last_name" : request.form['last_name'], 
+        "email" : request.form['email']
+        }
+        user_info = self.models['User'].update_user(format_user)
+        self.models['User'].set_user_level(request.form['user_level'], request.form['id'])
+        if user_info['status'] == True:
+            return redirect('/users/show/'+str(request.form['id']))
+        else:
+            for message in user_info['errors']:
+                flash(message, 'regis_errors')
+            return redirect('/')
+
+    def delete_check(self, id):
+        user_info = self.models['User'].get_user_info(id)
+        return self.load_view('/users/delete.html', user_info=user_info)
+
+    def delete(self):
+        self.models['User'].delete_user(request.form['id'])
+        return redirect('/users/dashboard')
+
+    def logout(self):
+        session.clear()
+        return redirect('/')

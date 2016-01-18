@@ -10,6 +10,7 @@
 from system.core.model import Model
 import re
 from flask import session
+from flask.ext.bcrypt import Bcrypt
 class User(Model):
     def __init__(self):
         super(User, self).__init__()
@@ -23,6 +24,10 @@ class User(Model):
 
         user = self.db.query_db("SELECT * FROM users WHERE id={}".format(id))
         return user[0]
+
+    def update_password(self, password, id):
+        pass_hash = self.bcrypt.generate_password_hash(password)
+        query = "UPDATE users SET pass_hash='{}' WHERE id={}".format(pass_hash, id)
 
     # Function to check a new user's submitted information and if it passes checks, upload to the server.
     def set_new_user(self, user_info):
@@ -65,13 +70,14 @@ class User(Model):
             if user[0]['id'] == 1:
                 self.db.query_db("UPDATE users SET user_level=9 WHERE id=1")
                 user=self.db.query_db(id_query)
+            print user
             session['user_id'] = user[0]['id']
             session['first_name'] = user[0]['first_name']
             session['user_level'] = user[0]['user_level']
             return {'status':True, 'user':user[0]}
 
     # Function to update an existing users's non-password information in the database. All the same checks need to occur for validation.
-    def update_user(self, info):
+    def update_user(self, user_info):
         EMAIL_REGEX = re.compile(r'^[a-za-z0-9\.\+_-]+@[a-za-z0-9\._-]+\.[a-za-z]*$')
         errors = []
 
@@ -93,10 +99,11 @@ class User(Model):
         if errors:
             return {'status':False, 'errors':errors}
         else:
-            query = "UPDATE users SET first_name='{}', last_name='{}', email='{}' WHERE id={}".format(info['first_name'], info['last_name'], info['email'], info['id'])
+            query = "UPDATE users SET first_name='{}', last_name='{}', email='{}' WHERE id={}".format(user_info['first_name'], user_info['last_name'], user_info['email'], user_info['id'])
+            print query
             self.db.query_db(query)
             
-            return {'status':True, 'user':user[0]}
+            return {'status':True}
 
     # Function to compare the supplied email and password combination to those in the server.
     def get_login_check(self, info):
@@ -111,14 +118,18 @@ class User(Model):
             status = True
             session['user_id'] = user[0]['id']
             session['first_name'] = user[0]['first_name']
+            session['user_level'] = user[0]['user_level']
 
             return {'status':True}
         else:
             return {'status':False}
 
-    def set_user_level(self):
-        query = "UPDATE users SET user_level={} WHERE id={}".format(request.form['user_level'], request.form['user_id'])
+    def set_user_level(self, user_level, id):
+        query = "UPDATE users SET user_level={} WHERE id={}".format(user_level, id)
         self.db.query_db(query)
+
+    def delete_user(self, id):
+        self.db.query_db("DELETE FROM users WHERE id={}".format(id))
 
     """
     Below is an example of a model method that queries the database for all users in a fictitious application
